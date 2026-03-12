@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ПОРТАЛ1409 Мобильная версия: Статистика проектов</title>
+    <link rel="icon" href="/static/favicon.png">
+</head>
+<body>
+    <style>
+        :root {
+            --bg-primary: #000000;
+            --bg-secondary: rgba(255, 255, 255, 0.08);
+            --bg-tertiary: rgba(255, 255, 255, 0.06);
+            --bg-hover: rgba(255, 255, 255, 0.12);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --text-muted: rgba(255, 255, 255, 0.5);
+            --border-color: rgba(255, 255, 255, 0.12);
+            --border-light: rgba(255, 255, 255, 0.15);
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --cloud1-color1: rgba(68, 70, 225, 0.4);
+            --cloud1-color2: rgba(220, 53, 69, 0.35);
+            --cloud2-color1: rgba(100, 102, 255, 0.3);
+            --cloud2-color2: rgba(255, 80, 100, 0.25);
+            --shadow-color: rgba(0, 0, 0, 0.3);
+            --accent: #4446E1;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background: var(--bg-primary);
+            min-height: 100vh;
+            color: var(--text-primary);
+            overflow-x: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background:
+                radial-gradient(ellipse 80% 60% at 30% 20%, var(--cloud1-color1) 0%, transparent 50%),
+                radial-gradient(ellipse 60% 50% at 70% 30%, var(--cloud1-color2) 0%, transparent 50%);
+            z-index: -1;
+            animation: cloudFloat 20s ease-in-out infinite, cloudFadeIn 2s ease-out forwards;
+            transition: background 0.3s ease;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: -30%;
+            left: -30%;
+            width: 160%;
+            height: 160%;
+            background:
+                radial-gradient(ellipse 50% 40% at 60% 25%, var(--cloud2-color1) 0%, transparent 45%),
+                radial-gradient(ellipse 40% 35% at 40% 35%, var(--cloud2-color2) 0%, transparent 40%);
+            z-index: -1;
+            animation: cloudFloat 25s ease-in-out infinite reverse, cloudFadeIn 3s ease-out forwards;
+            transition: background 0.3s ease;
+        }
+
+        @keyframes cloudFadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes cloudFloat {
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            25% {
+                transform: translate(5%, 3%) scale(1.05);
+            }
+
+            50% {
+                transform: translate(-3%, 5%) scale(0.98);
+            }
+
+            75% {
+                transform: translate(-5%, -2%) scale(1.02);
+            }
+        }
+
+        img.logo {
+            margin-top: 24px;
+            height: 28px;
+        }
+
+        h1 {
+            color: #fff;
+            margin-top: 16px;
+            text-align: center;
+            font-size: 26px;
+            font-weight: 700;
+        }
+
+        .search-wrapper {
+            margin-top: 16px;
+            width: 100%;
+            padding: 0 16px;
+            box-sizing: border-box;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: 999px;
+            border: 1px solid rgba(148, 163, 184, 0.7);
+            background: rgba(15, 23, 42, 0.8);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            box-sizing: border-box;
+            color: #f9fafb;
+            font-size: 14px;
+            outline: none;
+            text-align: left;
+        }
+
+        .search-input::placeholder {
+            color: #e5e7eb;
+        }
+
+        .filter-tabs {
+            margin: 10px 0 0;
+            display: flex;
+            flex-wrap: nowrap;
+            gap: 8px;
+            padding: 6px 16px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            width: 100%;
+            box-sizing: border-box;
+            scrollbar-width: none; /* Firefox */
+        }
+
+        .filter-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .filter-tab {
+            appearance: none;
+            -webkit-appearance: none;
+            flex: none;
+            width: auto;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(148, 163, 184, 0.4);
+            background: rgba(15, 23, 42, 0.6);
+            color: rgba(249, 250, 251, 0.8);
+            font-size: 13px;
+            font-weight: 600;
+            font-family: inherit;
+            border-radius: 999px;
+            padding: 8px 16px;
+            margin: 0;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+            box-sizing: border-box;
+        }
+
+        .filter-tab.active {
+            background: #4446E1;
+            border-color: #4446E1;
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(68, 70, 225, 0.4);
+        }
+
+        .projects-wrapper {
+            margin: 20px auto 24px;
+            max-width: 600px;
+            width: 100%;
+            padding: 0 16px 16px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .project-card {
+            border-radius: 18px;
+            border: 1px solid rgba(148, 163, 184, 0.7);
+            background: rgba(15, 23, 42, 0.7);
+            box-shadow: 0 18px 45px rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            padding: 12px 14px 14px;
+            color: #f9fafb;
+            box-sizing: border-box;
+        }
+
+        .project-title {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .project-meta {
+            font-size: 13px;
+            line-height: 1.4;
+            color: #e5e7eb;
+        }
+
+        .project-meta strong {
+            font-weight: 600;
+        }
+
+        .empty-state {
+            margin: 24px 16px 0;
+            color: #e5e7eb;
+            font-size: 14px;
+            text-align: center;
+        }
+    </style>
+
+    <img class="logo" src="/static/logo.svg" alt="Логотип 1409">
+
+    <h1>Проекты конкурса «Леонардо»</h1>
+
+    <div class="search-wrapper">
+        <input
+            id="searchInput"
+            class="search-input"
+            type="text"
+            placeholder="Поиск по участнику или названию"
+        >
+    </div>
+
+    <div class="filter-tabs" id="filterTabs">
+        <!-- Кнопки типов подставляются из данных (уникальные школы) -->
+    </div>
+
+    <div id="projectsWrapper" class="projects-wrapper">
+    </div>
+
+    <div id="emptyState" class="empty-state" style="display:none;">
+        Пока ничего не найдено.
+    </div>
+
+    <script>
+        const SHEET_CSV_URL = "/static/data.csv";
+
+        const projectsWrapper = document.getElementById("projectsWrapper");
+        const emptyState = document.getElementById("emptyState");
+        const searchInput = document.getElementById("searchInput");
+        const filterTabsEl = document.getElementById("filterTabs");
+
+        let allProjects = [];
+        let currentFilter = "all"; // "all" или значение школы
+        let currentQuery = "";
+        let filterTypes = []; // [{ value: "all", label: "Все проекты" }, { value: "ГБОУ Школа № 1409", label: "Школа 1409" }, ...]
+
+        const FALLBACK_PROJECTS_MOBILE = [
+            {
+                fio: "Иванов Иван",
+                title: "Пример проекта конкурса (мобильная версия)",
+                school: "ГБОУ Школа № 1409",
+                grade: "9",
+                teacher: "Петров П.П.",
+                type: "IT",
+            },
+            {
+                fio: "Петрова Мария",
+                title: "Ещё один пример проекта",
+                school: "ГБОУ Школа № 1409",
+                grade: "8",
+                teacher: "Иванова И.И.",
+                type: "Экология",
+            },
+            {
+                fio: "Сидоров Алексей",
+                title: "Чат-бот для школы",
+                school: "ГБОУ Школа № 1409",
+                grade: "10",
+                teacher: "Смирнов С.С.",
+                type: "Чат-бот",
+            },
+        ];
+
+        function renderProjects(list) {
+            if (!list.length) {
+                projectsWrapper.innerHTML = "";
+                emptyState.style.display = "block";
+                emptyState.textContent = "Ничего не найдено. Попробуйте изменить запрос.";
+                return;
+            }
+
+            emptyState.style.display = "none";
+
+            projectsWrapper.innerHTML = list
+                .map(
+                    (p) => `
+                    <div class="project-card">
+                        <div class="project-title">${p.title}</div>
+                        <div class="project-meta">
+                            <div><strong>Участник:</strong> ${p.fio}</div>
+                            ${
+                                p.school
+                                    ? `<div><strong>Школа:</strong> ${p.school}</div>`
+                                    : ""
+                            }
+                            ${
+                                p.grade
+                                    ? `<div><strong>Класс:</strong> ${p.grade}</div>`
+                                    : ""
+                            }
+                            ${
+                                p.teacher
+                                    ? `<div><strong>Руководитель:</strong> ${p.teacher}</div>`
+                                    : ""
+                            }
+                            ${
+                                p.type
+                                    ? `<div style="margin-top:4px;"><span style="background:rgba(68,70,225,0.2);color:#a5a6ff;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;">${p.type}</span></div>`
+                                    : ""
+                            }
+                        </div>
+                    </div>
+                `
+                )
+                .join("");
+        }
+
+        // A: ФИ участника
+        // B: Название работы
+        // C: Образовательное учреждение
+        // D: Класс
+        // E: ФИО руководителя
+        // F: Тип проекта (IT, Экология, Чат-бот и т.д.)
+        fetch(SHEET_CSV_URL)
+            .then((res) => {
+                if (!res.ok) {
+                    throw new Error("Bad status");
+                }
+                return res.text();
+            })
+            .then((text) => {
+                const lines = text.split(/\r?\n/).filter(Boolean);
+                if (lines.length <= 1) {
+                    allProjects = FALLBACK_PROJECTS_MOBILE;
+                    buildFilterTabs(allProjects);
+                    applyFilters();
+                    return;
+                }
+
+                const [header, ...rows] = lines;
+
+                allProjects = rows
+                    .map((row) => {
+                        const cols = row.split(",");
+                        const [fio, title, school, grade, teacher, type] = cols;
+                        return {
+                            fio: (fio || "").trim(),
+                            title: (title || "").trim(),
+                            school: (school || "").trim(),
+                            grade: (grade || "").trim(),
+                            teacher: (teacher || "").trim(),
+                            type: (type || "").trim(),
+                        };
+                    })
+                    .filter((item) => item.fio && item.title);
+
+                if (!allProjects.length) {
+                    allProjects = FALLBACK_PROJECTS_MOBILE;
+                }
+
+                buildFilterTabs(allProjects);
+                applyFilters();
+            })
+            .catch(() => {
+                allProjects = FALLBACK_PROJECTS_MOBILE;
+                buildFilterTabs(allProjects);
+                applyFilters();
+            });
+
+        function buildFilterTabs(projects) {
+            // Собираем уникальные типы проектов
+            const types = [...new Set(projects.map((p) => p.type).filter(Boolean))].sort();
+            
+            filterTypes = [
+                { value: "all", label: "Все проекты" },
+                ...types.map((t) => ({
+                    value: t,
+                    label: t,
+                })),
+            ];
+
+            filterTabsEl.innerHTML = filterTypes
+                .map(
+                    (t, i) => `
+                <div class="filter-tab ${i === 0 ? "active" : ""}" role="button" data-filter="${t.value.replace(/"/g, "&quot;")}">
+                    ${t.label}
+                </div>
+            `
+                )
+                .join("");
+
+            filterTabsEl.querySelectorAll(".filter-tab").forEach((btn) => {
+                btn.addEventListener("click", () => setFilter(btn.getAttribute("data-filter")));
+            });
+        }
+
+        function applyFilters() {
+            if (!allProjects.length) {
+                renderProjects([]);
+                return;
+            }
+
+            let list = [...allProjects];
+
+            if (currentFilter !== "all") {
+                list = list.filter((p) => (p.type || "").trim() === currentFilter);
+            }
+
+            if (currentQuery) {
+                const q = currentQuery;
+                list = list.filter((p) => {
+                    const fio = (p.fio || "").toLowerCase();
+                    const title = (p.title || "").toLowerCase();
+                    return fio.includes(q) || title.includes(q);
+                });
+            }
+
+            renderProjects(list);
+        }
+
+        searchInput.addEventListener("input", () => {
+            currentQuery = searchInput.value.trim().toLowerCase();
+            applyFilters();
+        });
+
+        function setFilter(type) {
+            currentFilter = type;
+            filterTabsEl.querySelectorAll(".filter-tab").forEach((btn) => {
+                btn.classList.toggle("active", btn.getAttribute("data-filter") === type);
+            });
+            applyFilters();
+        }
+    </script>
+    <!-- Global Overlay for Show Start -->
+    <div id="showOverlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; color: white; backdrop-filter: blur(15px); transition: opacity 0.5s ease;">
+        <img src="/static/logo.svg" style="height: 60px; margin-bottom: 30px;">
+        <h1 style="font-size: 2rem; margin: 0 0 16px; color: #4446E1; text-transform: uppercase;">Внимание!</h1>
+        <p style="font-size: 1.5rem; margin: 0 20px;">В Актовом зале началось<br>Шоу Леонардо!</p>
+    </div>
+
+    <script>
+        // Logic to show overlay when show starts
+        function checkShowStatus() {
+            const lastStart = localStorage.getItem('iskra_show_start_command');
+            const now = new Date().getTime();
+            // Show for 40 seconds after start (approx audio length)
+            const SHOW_DURATION = 40000; 
+
+            if (lastStart && (now - parseInt(lastStart) < SHOW_DURATION)) {
+                const overlay = document.getElementById('showOverlay');
+                overlay.style.display = 'flex';
+                
+                const remainingTime = SHOW_DURATION - (now - parseInt(lastStart));
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                }, remainingTime);
+            }
+        }
+
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'iskra_show_start_command') {
+                checkShowStatus();
+            }
+        });
+        
+        // Check on load
+        checkShowStatus();
+    </script>
+</body>
+</html>

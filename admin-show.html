@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ПОРТАЛ1409: Админ-панель Шоу</title>
+    <link rel="icon" href="/static/favicon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <style>
+        body {
+            background: #0f172a;
+            color: #f8fafc;
+            font-family: "Inter", sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        h1 { margin-bottom: 32px; }
+        button {
+            background: #4446E1;
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: transform 0.1s, background 0.2s;
+        }
+        button:hover { background: #3730a3; }
+        button:active { transform: scale(0.98); }
+        .status { margin-top: 20px; color: #94a3b8; }
+    </style>
+
+    <h1>Управление Шоу Леонардо</h1>
+    <button onclick="triggerShow()">ЗАПУСТИТЬ ШОУ СЕЙЧАС</button>
+    <button onclick="playSound()" style="background: #10b981; margin-top: 16px;">ОТПРАВИТЬ КОМАНДУ: ЗВУК</button>
+    <button onclick="pauseSound()" style="background: #f59e0b; margin-top: 16px;">ПАУЗА ЗВУКА</button>
+    <button onclick="toggleQR()" style="background: #8b5cf6; margin-top: 16px;">ПОКАЗАТЬ/СКРЫТЬ QR</button>
+    <button onclick="toggleTimer()" style="background: #6366f1; margin-top: 16px;">ПОКАЗАТЬ/СКРЫТЬ ТАЙМЕР</button>
+    <button onclick="resetShow()" style="background: #ef4444; margin-top: 16px;">СБРОСИТЬ / НАЧАТЬ ЗАНОВО</button>
+    <div class="status" id="status">Нажмите кнопку, чтобы принудительно начать шоу на всех экранах.</div>
+
+    <script>
+        function triggerShow() {
+            // Отправляем команду на сервер или используем localStorage для синхронизации в рамках одного браузера
+            const now = new Date().getTime();
+            localStorage.setItem('iskra_show_start_command', now);
+            
+            document.getElementById('status').innerText = "Команда отправлена! Шоу должно начаться.";
+            setTimeout(() => {
+                document.getElementById('status').innerText = "Нажмите кнопку, чтобы принудительно начать шоу на всех экранах.";
+            }, 3000);
+        }
+
+        function playSound() {
+            const now = new Date().getTime();
+            localStorage.setItem('iskra_play_sound_command', now);
+            
+            document.getElementById('status').innerText = "Команда включения звука отправлена!";
+            setTimeout(() => {
+                document.getElementById('status').innerText = "Нажмите кнопку, чтобы принудительно начать шоу на всех экранах.";
+            }, 3000);
+        }
+
+        function pauseSound() {
+            const now = new Date().getTime();
+            localStorage.setItem('iskra_pause_sound_command', now);
+            
+            document.getElementById('status').innerText = "Команда паузы звука отправлена!";
+            setTimeout(() => {
+                document.getElementById('status').innerText = "Нажмите кнопку, чтобы принудительно начать шоу на всех экранах.";
+            }, 3000);
+        }
+
+        function toggleQR() {
+            const now = new Date().getTime();
+            localStorage.setItem('iskra_toggle_qr_command', now);
+            
+            document.getElementById('status').innerText = "Команда переключения QR отправлена!";
+            setTimeout(() => {
+                document.getElementById('status').innerText = "Нажмите кнопку, чтобы принудительно начать шоу на всех экранах.";
+            }, 3000);
+        }
+
+        function toggleTimer() {
+            const now = new Date().getTime();
+            localStorage.setItem('iskra_toggle_timer_command', now);
+            
+            document.getElementById('status').innerText = "Команда переключения таймера отправлена!";
+            setTimeout(() => {
+                document.getElementById('status').innerText = "Нажмите кнопку, чтобы принудительно начать шоу на всех экранах.";
+            }, 3000);
+        }
+
+        function resetShow() {
+            const now = new Date().getTime();
+            localStorage.setItem('iskra_show_reset_command', now);
+            
+            document.getElementById('status').innerText = "Команда сброса отправлена! Страница перезагрузится.";
+            setTimeout(() => {
+                document.getElementById('status').innerText = "Нажмите кнопку, чтобы принудительно начать шоу на всех экранах.";
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

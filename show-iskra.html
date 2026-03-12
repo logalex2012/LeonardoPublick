@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ПОРТАЛ1409: Шоу Леонардо</title>
+    <link rel="icon" href="/static/favicon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <style>
+        :root {
+            --bg-primary: #000000;
+            --text-primary: #ffffff;
+            --accent: #4446E1;
+            --cloud1-color1: rgba(68, 70, 225, 0.4);
+            --cloud1-color2: rgba(220, 53, 69, 0.35);
+            --cloud2-color1: rgba(100, 102, 255, 0.3);
+            --cloud2-color2: rgba(255, 80, 100, 0.25);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            font-family: "Inter", sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* Background Clouds */
+        body::before, body::after {
+            content: '';
+            position: fixed;
+            width: 200%;
+            height: 200%;
+            z-index: -1;
+        }
+
+        body::before {
+            top: -50%;
+            left: -50%;
+            background: radial-gradient(ellipse 80% 60% at 30% 20%, var(--cloud1-color1) 0%, transparent 50%),
+                        radial-gradient(ellipse 60% 50% at 70% 30%, var(--cloud1-color2) 0%, transparent 50%);
+            animation: cloudFloat 20s ease-in-out infinite;
+        }
+
+        body::after {
+            top: -30%;
+            left: -30%;
+            width: 160%;
+            height: 160%;
+            background: radial-gradient(ellipse 50% 40% at 60% 25%, var(--cloud2-color1) 0%, transparent 45%),
+                        radial-gradient(ellipse 40% 35% at 40% 35%, var(--cloud2-color2) 0%, transparent 40%);
+            animation: cloudFloat2 25s ease-in-out infinite reverse;
+        }
+
+        @keyframes cloudFloat {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(-3%, 5%) scale(0.98); }
+        }
+
+        @keyframes cloudFloat2 {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(4%, -3%) rotate(-2deg); }
+        }
+
+        .container {
+            text-align: center;
+            z-index: 1;
+        }
+
+        .logo {
+            height: 40px;
+            margin-bottom: 32px;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0.8;
+        }
+
+        .timer {
+            display: flex;
+            gap: 24px;
+            justify-content: center;
+        }
+
+        /* Убираем скрытие и логику admin-mode для таймера, теперь он виден всегда */
+        /* body.admin-mode .timer { display: flex; } */
+        
+        /* Статус "До начала" тоже показываем всегда */
+        #statusText {
+            display: block;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0.8;
+        }
+
+        .timer-value {
+            font-size: 80px;
+            font-weight: 800;
+            line-height: 1;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .timer-label {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 8px;
+            opacity: 0.6;
+        }
+
+        @media (max-width: 600px) {
+            .timer-value { font-size: 48px; }
+            .timer { gap: 16px; }
+        }
+    </style>
+
+    <div class="container">
+        <img class="logo" src="/static/logo.svg" alt="Логотип 1409" onclick="toggleAdminMode()" style="cursor: pointer;" title="Кликните 5 раз для входа в админ-режим">
+        <h1 id="statusText">До начала шоу</h1>
+        
+        <div class="timer" id="timer">
+            <div class="timer-item">
+                <div class="timer-value" id="hours">00</div>
+                <div class="timer-label">Часов</div>
+            </div>
+            <div class="timer-item">
+                <div class="timer-value" id="minutes">00</div>
+                <div class="timer-label">Минут</div>
+            </div>
+            <div class="timer-item">
+                <div class="timer-value" id="seconds">00</div>
+                <div class="timer-label">Секунд</div>
+            </div>
+        </div>
+
+        <div id="qrContainer" style="margin-top: 40px; text-align: center;">
+            <div style="background: white; padding: 10px; border-radius: 12px; display: inline-block;">
+                <img id="qrCode" src="" alt="QR Code" style="width: 150px; height: 150px; display: block;">
+            </div>
+            <p style="margin-top: 12px; font-size: 14px; opacity: 0.7;">Сканируйте для мобильной версии</p>
+        </div>
+
+        <div id="iskraSpeech" style="display:none; margin-top: 32px; max-width: 600px; line-height: 1.6; font-size: 18px; opacity: 0; transition: opacity 1s ease;">
+            <p>Добро пожаловать на шоу Леонардо! Искусственный интеллект "Искра" приветствует вас.</p>
+        </div>
+        <audio id="iskraAudio" src="/static/iskra-leonardo.mp3" preload="auto"></audio>
+    </div>
+
+    <div id="startOverlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; backdrop-filter: blur(10px);">
+        <h1 style="font-size: 2rem; color: white; margin-bottom: 16px;">Нажмите в любом месте</h1>
+        <p style="color: rgba(255,255,255,0.7);">чтобы активировать звук и начать</p>
+    </div>
+
+    <script>
+        // Overlay click handler to unlock audio
+        document.getElementById('startOverlay').addEventListener('click', function() {
+            const audio = document.getElementById('iskraAudio');
+            // Play and immediately pause to unlock audio context
+            audio.play().then(() => {
+                audio.pause();
+                audio.currentTime = 0;
+                this.style.opacity = '0';
+                setTimeout(() => {
+                    this.style.display = 'none';
+                }, 500);
+            }).catch(e => {
+                console.error("Audio unlock failed:", e);
+                // Still hide overlay so user can try again if needed or just see the screen
+                this.style.display = 'none';
+            });
+        });
+
+        // Set QR code source dynamically based on current origin
+        const qrUrl = window.location.origin + '/mobile-dashbord.html';
+        document.getElementById('qrCode').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(qrUrl)}`;
+
+        // Слушаем команду запуска из админки (через localStorage)
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'iskra_show_start_command') {
+                startShow();
+            }
+            if (e.key === 'iskra_play_sound_command') {
+                const audio = document.getElementById('iskraAudio');
+                if (audio) {
+                    audio.currentTime = 0;
+                    audio.play().catch(err => console.log("Still blocked:", err));
+                }
+            }
+            if (e.key === 'iskra_pause_sound_command') {
+                const audio = document.getElementById('iskraAudio');
+                if (audio) {
+                    audio.pause();
+                }
+            }
+            if (e.key === 'iskra_toggle_qr_command') {
+                const qrContainer = document.getElementById('qrContainer');
+                if (qrContainer) {
+                    qrContainer.style.display = (qrContainer.style.display === 'none') ? 'block' : 'none';
+                }
+            }
+            if (e.key === 'iskra_toggle_timer_command') {
+                const timer = document.getElementById('timer');
+                if (timer) {
+                    timer.style.display = (timer.style.display === 'none') ? 'flex' : 'none';
+                }
+            }
+            if (e.key === 'iskra_show_reset_command') {
+                location.reload();
+            }
+        });
+
+        // Также проверяем при загрузке, не была ли команда отправлена недавно (например, 10 секунд назад)
+        const lastCommand = localStorage.getItem('iskra_show_start_command');
+        if (lastCommand && (new Date().getTime() - parseInt(lastCommand) < 10000)) {
+            startShow();
+        }
+
+        // Устанавливаем таймер на 5 минут от текущего момента (для теста)
+        // Чтобы синхронизировать время на разных устройствах, лучше использовать фиксированную дату:
+        // const targetDate = new Date("2024-10-25T10:00:00");
+        const targetDate = new Date();
+        targetDate.setMinutes(targetDate.getMinutes() + 5);
+
+        // Проверяем URL на наличие параметра ?admin=1
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('admin') === '1') {
+            document.body.classList.add('admin-mode');
+        } else {
+            // Если НЕ админ, проверяем localStorage на наличие флага "show_timer"
+            // Этот флаг можно установить вручную в консоли или через админку (если допилить)
+            if (localStorage.getItem('show_timer') === 'true') {
+                document.body.classList.add('admin-mode');
+            }
+        }
+
+        let clickCount = 0;
+        function toggleAdminMode() {
+            clickCount++;
+            if (clickCount >= 5) {
+                document.body.classList.toggle('admin-mode');
+                clickCount = 0;
+            }
+        }
+
+        let isShowStarted = false;
+
+        function startShow() {
+            if (isShowStarted) return;
+            isShowStarted = true;
+
+            const statusText = document.getElementById('statusText');
+            const timer = document.getElementById('timer');
+            const qrContainer = document.getElementById('qrContainer');
+            const iskraSpeech = document.getElementById('iskraSpeech');
+
+            // Показываем статус даже зрителям, когда шоу началось
+            statusText.style.display = 'block';
+            statusText.innerText = "Шоу началось!";
+            timer.style.display = 'none';
+            if (qrContainer) qrContainer.style.display = 'none';
+            
+            iskraSpeech.style.display = 'block';
+            // Небольшая задержка для плавности
+            setTimeout(() => {
+                iskraSpeech.style.opacity = '1';
+                
+                const audio = document.getElementById('iskraAudio');
+                if (audio) {
+                    audio.play().catch(e => {
+                        console.log("Автоплей заблокирован. Ожидание команды из админки или взаимодействия.", e);
+                    });
+                }
+            }, 100);
+        }
+
+        function updateTimer() {
+            const now = new Date();
+            const diff = targetDate - now;
+
+            if (diff <= 0) {
+                startShow();
+                return;
+            }
+
+            const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            const minutes = Math.floor((diff / (1000 * 60)) % 60);
+            const seconds = Math.floor((diff / 1000) % 60);
+
+            document.getElementById('hours').innerText = String(hours).padStart(2, '0');
+            document.getElementById('minutes').innerText = String(minutes).padStart(2, '0');
+            document.getElementById('seconds').innerText = String(seconds).padStart(2, '0');
+        }
+
+        const timerInterval = setInterval(updateTimer, 1000);
+        updateTimer();
+    </script>
+</body>
+</html>
