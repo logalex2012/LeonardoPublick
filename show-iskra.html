@@ -232,11 +232,8 @@
             startShow();
         }
 
-        // Устанавливаем таймер на 5 минут от текущего момента (для теста)
-        // Чтобы синхронизировать время на разных устройствах, лучше использовать фиксированную дату:
-        // const targetDate = new Date("2024-10-25T10:00:00");
-        const targetDate = new Date();
-        targetDate.setMinutes(targetDate.getMinutes() + 5);
+        // Устанавливаем таймер на 14 марта 11:00
+        const targetDate = new Date("2026-03-14T11:00:00");
 
         // Проверяем URL на наличие параметра ?admin=1
         const urlParams = new URLSearchParams(window.location.search);
