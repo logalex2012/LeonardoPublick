@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ПОРТАЛ1409: Трансляция</title>
+    <link rel="icon" href="/static/favicon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <style>
+        :root {
+            --bg-primary: #000000;
+            --text-primary: #ffffff;
+            --accent: #4446E1;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            font-family: "Inter", sans-serif;
+            background-color: var(--bg-primary);
+            background-image: url("static/apps-wallpaper.svg");
+            background-size: cover;
+            background-position: center;
+            color: var(--text-primary);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .header {
+            width: 100%;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-sizing: border-box;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            z-index: 10;
+            flex-shrink: 0;
+        }
+
+        .logo {
+            height: 32px;
+        }
+
+        .live-badge {
+            background: #ef4444;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 14px;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .main-content {
+            display: flex;
+            flex-direction: row;
+            flex: 1;
+            height: calc(100vh - 65px);
+            overflow: hidden;
+        }
+
+        .video-wrapper {
+            flex: 1;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .chat-wrapper {
+            width: 350px;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(20px);
+            border-left: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+
+        .chat-header {
+            padding: 16px;
+            font-weight: 600;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.2);
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .message {
+            background: rgba(255,255,255,0.05);
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .message-author {
+            font-weight: 600;
+            color: #a5a6ff;
+            margin-bottom: 4px;
+            font-size: 12px;
+        }
+
+        .chat-input-area {
+            padding: 16px;
+            background: rgba(0,0,0,0.3);
+            border-top: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            gap: 8px;
+        }
+
+        .chat-input {
+            flex: 1;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 10px 14px;
+            border-radius: 8px;
+            color: white;
+            font-family: inherit;
+            outline: none;
+        }
+
+        .chat-input:focus {
+            border-color: var(--accent);
+        }
+
+        .chat-send {
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .chat-send:hover {
+            background: #3730a3;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            .video-wrapper {
+                flex: none;
+                height: 40vh;
+            }
+            .chat-wrapper {
+                width: 100%;
+                flex: 1;
+                border-left: none;
+                border-top: 1px solid rgba(255,255,255,0.1);
+            }
+        }
+    </style>
+
+    <div class="header">
+        <img class="logo" src="static/logo.svg" alt="Логотип">
+        <div style="display: flex; gap: 16px; align-items: center;">
+            <div class="viewer-count" id="viewerCount" style="color: rgba(255,255,255,0.7); font-weight: 600; display: flex; align-items: center; gap: 6px;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                <span>0</span>
+            </div>
+            <div class="live-badge">
+                <div class="live-dot"></div>
+                Прямой эфир
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="video-wrapper">
+            <iframe id="videoFrame" src="" width="100%" height="100%" allow="autoplay; encrypted-media; fullscreen; picture-in-picture;" frameborder="0" allowfullscreen></iframe>
+            
+            <!-- Overlay for Moderator Messages -->
+            <div id="modOverlay" style="position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); background: rgba(68, 70, 225, 0.9); padding: 16px 32px; border-radius: 16px; color: white; font-weight: 600; font-size: 20px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5); backdrop-filter: blur(10px); opacity: 0; transition: opacity 0.3s, transform 0.3s; pointer-events: none; z-index: 50;">
+                <span id="modOverlayText"></span>
+            </div>
+        </div>
+        
+        <div class="chat-wrapper">
+            <div class="chat-header">
+                Чат трансляции
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <div class="message">
+                    <div class="message-author">Модератор</div>
+                    Добро пожаловать на трансляцию конкурса «Леонардо»! Задавайте свои вопросы здесь.
+                </div>
+            </div>
+            <div class="chat-input-area">
+                <input type="text" id="chatInput" class="chat-input" placeholder="Написать сообщение...">
+                <button class="chat-send" onclick="sendMessage()">Отправить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Global Overlay for Show Start -->
+    <div id="showOverlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; color: white; backdrop-filter: blur(15px); transition: opacity 0.5s ease;">
+        <img src="/static/logo.svg" style="height: 80px; margin-bottom: 40px;">
+        <h1 style="font-size: 3rem; margin: 0 0 24px; color: #4446E1; text-transform: uppercase;">Внимание!</h1>
+        <p style="font-size: 2rem; margin: 0 20px;">В Актовом зале началось<br>Шоу Леонардо!</p>
+    </div>
+
+    <!-- Socket.IO -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.min.js"></script>
+    <script>
+        const socket = io();
+
+        // DOM Elements
+        const messagesContainer = document.getElementById('chatMessages');
+        const chatInput = document.getElementById('chatInput');
+        const videoFrame = document.getElementById('videoFrame');
+        const viewerCountEl = document.querySelector('#viewerCount span');
+        const modOverlay = document.getElementById('modOverlay');
+        const modOverlayText = document.getElementById('modOverlayText');
+
+        // Render a single message
+        function renderMessage(msg) {
+            const msgEl = document.createElement('div');
+            msgEl.className = 'message';
+            msgEl.id = `msg-${msg.id}`;
+            
+            if (msg.is_moderator) {
+                msgEl.style.background = 'rgba(68, 70, 225, 0.2)';
+                msgEl.style.border = '1px solid rgba(68, 70, 225, 0.4)';
+            }
+
+            const safeText = msg.text.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+            const authorColor = msg.is_moderator ? '#fbbf24' : '#a5a6ff'; // Gold for mod, purple for guest
+            
+            msgEl.innerHTML = `
+                <div class="message-author" style="color: ${authorColor}">
+                    ${msg.is_moderator ? '👑 ' : ''}${msg.author}
+                </div>
+                ${safeText}
+            `;
+            
+            messagesContainer.appendChild(msgEl);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Socket Events
+        socket.on('init_state', (state) => {
+            videoFrame.src = state.video_link;
+            messagesContainer.innerHTML = '';
+            state.chat_messages.forEach(renderMessage);
+        });
+
+        socket.on('viewer_count_updated', (data) => {
+            viewerCountEl.innerText = data.count;
+        });
+
+        socket.on('new_message', (msg) => {
+            renderMessage(msg);
+        });
+
+        socket.on('message_deleted', (data) => {
+            const msgEl = document.getElementById(`msg-${data.id}`);
+            if (msgEl) msgEl.remove();
+        });
+
+        socket.on('video_link_updated', (data) => {
+            videoFrame.src = data.link;
+        });
+
+        socket.on('overlay_message', (data) => {
+            modOverlayText.innerText = data.text;
+            modOverlay.style.opacity = '1';
+            modOverlay.style.transform = 'translateX(-50%) translateY(-20px)';
+            
+            setTimeout(() => {
+                modOverlay.style.opacity = '0';
+                modOverlay.style.transform = 'translateX(-50%) translateY(0)';
+            }, 8000); // Show for 8 seconds
+        });
+
+        // Chat Logic
+        function sendMessage() {
+            const text = chatInput.value.trim();
+            if (!text) return;
+
+            socket.emit('send_message', {
+                author: 'Гость',
+                text: text,
+                is_moderator: false
+            });
+            
+            chatInput.value = '';
+        }
+
+        chatInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Logic to show overlay when show starts (Legacy from local storage)
+        function checkShowStatus() {
+            const lastStart = localStorage.getItem('iskra_show_start_command');
+            const now = new Date().getTime();
+            const SHOW_DURATION = 40000; 
+
+            if (lastStart && (now - parseInt(lastStart) < SHOW_DURATION)) {
+                const overlay = document.getElementById('showOverlay');
+                overlay.style.display = 'flex';
+                
+                const remainingTime = SHOW_DURATION - (now - parseInt(lastStart));
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                }, remainingTime);
+            }
+        }
+
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'iskra_show_start_command') {
+                checkShowStatus();
+            }
+        });
+        
+        checkShowStatus();
+    </script>
+</body>
+</html>

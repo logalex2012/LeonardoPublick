@@ -16,128 +16,267 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            height: 100vh;
+            padding: 40px 20px;
             margin: 0;
+            min-height: 100vh;
+            box-sizing: border-box;
         }
-        h1 { margin-bottom: 32px; }
+        h1 { margin-bottom: 32px; text-align: center; }
+        .container {
+            display: flex;
+            gap: 40px;
+            width: 100%;
+            max-width: 1200px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .panel {
+            background: rgba(255,255,255,0.05);
+            padding: 30px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+            flex: 1;
+            min-width: 350px;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .panel h2 {
+            margin: 0 0 16px 0;
+            font-size: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
         button {
             background: #4446E1;
             color: white;
             border: none;
-            padding: 16px 32px;
-            font-size: 18px;
+            padding: 14px 20px;
+            font-size: 16px;
             font-weight: 600;
             border-radius: 12px;
             cursor: pointer;
             transition: transform 0.1s, background 0.2s;
+            width: 100%;
         }
         button:hover { background: #3730a3; }
         button:active { transform: scale(0.98); }
-        .status { margin-top: 20px; color: #94a3b8; }
+        input {
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(0,0,0,0.3);
+            color: white;
+            font-size: 16px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .status { margin-top: 20px; color: #94a3b8; text-align: center; }
+        
+        /* Chat styles */
+        .chat-box {
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            height: 300px;
+            overflow-y: auto;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .chat-msg {
+            background: rgba(255,255,255,0.05);
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .chat-msg.mod {
+            border: 1px solid rgba(68, 70, 225, 0.4);
+            background: rgba(68, 70, 225, 0.1);
+        }
+        .del-btn {
+            background: #ef4444;
+            padding: 4px 8px;
+            font-size: 12px;
+            border-radius: 4px;
+            width: auto;
+        }
+        .del-btn:hover { background: #dc2626; }
     </style>
 
-    <h1>Управление Шоу Леонардо</h1>
-    <button onclick="triggerShow()">ЗАПУСТИТЬ ШОУ СЕЙЧАС</button>
-    <button onclick="playSound()" style="background: #10b981; margin-top: 16px;">ОТПРАВИТЬ КОМАНДУ: ЗВУК</button>
-    <button onclick="pauseSound()" style="background: #f59e0b; margin-top: 16px;">ПАУЗА ЗВУКА</button>
-    <button onclick="toggleQR()" style="background: #8b5cf6; margin-top: 16px;">ПОКАЗАТЬ/СКРЫТЬ QR</button>
-    <button onclick="toggleTimer()" style="background: #6366f1; margin-top: 16px;">ПОКАЗАТЬ/СКРЫТЬ ТАЙМЕР</button>
-    <button onclick="stopShow()" style="background: #dc2626; margin-top: 16px;">ОСТАНОВИТЬ ШОУ</button>
+    <h1>Управление ПОРТАЛ1409</h1>
     
-    <div style="margin-top: 32px; width: 100%; max-width: 400px; display: flex; gap: 8px;">
-        <input id="msgInput" type="text" placeholder="Текст сообщения на экран" style="flex:1; padding: 12px; border-radius: 8px; border: none; font-size: 16px;">
-        <button onclick="showMessage()" style="background: #0ea5e9; padding: 12px; margin: 0;">ОТПРАВИТЬ</button>
+    <div class="container">
+        <!-- Левая панель: Управление экранами -->
+        <div class="panel">
+            <h2>Управление экранами</h2>
+            <button onclick="triggerShow()">ЗАПУСТИТЬ ШОУ СЕЙЧАС</button>
+            <button onclick="playSound()" style="background: #10b981;">ОТПРАВИТЬ КОМАНДУ: ЗВУК</button>
+            <button onclick="pauseSound()" style="background: #f59e0b;">ПАУЗА ЗВУКА</button>
+            <button onclick="toggleQR()" style="background: #8b5cf6;">ПОКАЗАТЬ/СКРЫТЬ QR</button>
+            <button onclick="toggleTimer()" style="background: #6366f1;">ПОКАЗАТЬ/СКРЫТЬ ТАЙМЕР</button>
+            <button onclick="stopShow()" style="background: #dc2626;">ОСТАНОВИТЬ ШОУ</button>
+            <button onclick="resetShow()" style="background: #ef4444; margin-top: 16px;">СБРОСИТЬ / НАЧАТЬ ЗАНОВО</button>
+        </div>
+
+        <!-- Правая панель: Трансляция и Чат -->
+        <div class="panel">
+            <h2>Трансляция <span id="viewerCount" style="font-size: 14px; color: #10b981;">👁️ 0</span></h2>
+            
+            <div>
+                <label style="font-size: 14px; color: #94a3b8; margin-bottom: 4px; display: block;">Ссылка на видео (iframe src):</label>
+                <div style="display: flex; gap: 8px;">
+                    <input id="videoLinkInput" type="text" placeholder="https://vk.com/video_ext.php?...">
+                    <button onclick="updateVideoLink()" style="width: auto; background: #10b981;">Обновить</button>
+                </div>
+            </div>
+
+            <div>
+                <label style="font-size: 14px; color: #94a3b8; margin-bottom: 4px; display: block;">Всплывающее уведомление поверх видео:</label>
+                <div style="display: flex; gap: 8px;">
+                    <input id="overlayMsgInput" type="text" placeholder="Например: Через 5 минут перерыв">
+                    <button onclick="sendOverlayMessage()" style="width: auto; background: #8b5cf6;">Отправить</button>
+                </div>
+            </div>
+
+            <div style="margin-top: 16px;">
+                <label style="font-size: 14px; color: #94a3b8; margin-bottom: 4px; display: block;">Модерация чата:</label>
+                <div class="chat-box" id="adminChatBox">
+                    <!-- Сообщения будут здесь -->
+                </div>
+                <div style="display: flex; gap: 8px; margin-top: 8px;">
+                    <input id="modChatInput" type="text" placeholder="Написать от имени Модератора...">
+                    <button onclick="sendModMessage()" style="width: auto;">Отправить</button>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <button onclick="resetShow()" style="background: #ef4444; margin-top: 32px;">СБРОСИТЬ / НАЧАТЬ ЗАНОВО</button>
-    <div class="status" id="status">Нажмите кнопку, чтобы принудительно начать шоу на всех экранах.</div>
+    <div class="status" id="status">Система готова к работе.</div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.min.js"></script>
     <script>
-        function triggerShow() {
-            // Отправляем команду на сервер или используем localStorage для синхронизации в рамках одного браузера
-            const now = new Date().getTime();
-            localStorage.setItem('iskra_show_start_command', now);
+        const socket = io();
+        const adminChatBox = document.getElementById('adminChatBox');
+        const viewerCountEl = document.getElementById('viewerCount');
+
+        // Socket Events
+        socket.on('init_state', (state) => {
+            document.getElementById('videoLinkInput').value = state.video_link;
+            adminChatBox.innerHTML = '';
+            state.chat_messages.forEach(renderAdminMessage);
+        });
+
+        socket.on('viewer_count_updated', (data) => {
+            viewerCountEl.innerText = `👁️ ${data.count}`;
+        });
+
+        socket.on('new_message', (msg) => {
+            renderAdminMessage(msg);
+        });
+
+        socket.on('message_deleted', (data) => {
+            const msgEl = document.getElementById(`admin-msg-${data.id}`);
+            if (msgEl) msgEl.remove();
+        });
+
+        function renderAdminMessage(msg) {
+            const msgEl = document.createElement('div');
+            msgEl.className = `chat-msg ${msg.is_moderator ? 'mod' : ''}`;
+            msgEl.id = `admin-msg-${msg.id}`;
             
-            document.getElementById('status').innerText = "Команда отправлена! Шоу должно начаться.";
-            setTimeout(() => {
-                document.getElementById('status').innerText = "Нажмите кнопку, чтобы принудительно начать шоу на всех экранах.";
-            }, 3000);
+            const safeText = msg.text.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+            
+            msgEl.innerHTML = `
+                <div>
+                    <strong style="color: ${msg.is_moderator ? '#fbbf24' : '#a5a6ff'}">${msg.author}</strong>: ${safeText}
+                </div>
+                <button class="del-btn" onclick="deleteMessage('${msg.id}')">Удалить</button>
+            `;
+            
+            adminChatBox.appendChild(msgEl);
+            adminChatBox.scrollTop = adminChatBox.scrollHeight;
         }
 
-        function playSound() {
-            const now = new Date().getTime();
-            localStorage.setItem('iskra_play_sound_command', now);
-            
-            document.getElementById('status').innerText = "Команда включения звука отправлена!";
-            setTimeout(() => {
-                document.getElementById('status').innerText = "Нажмите кнопку, чтобы принудительно начать шоу на всех экранах.";
-            }, 3000);
+        function deleteMessage(id) {
+            socket.emit('delete_message', { id: id });
         }
 
-        function pauseSound() {
-            const now = new Date().getTime();
-            localStorage.setItem('iskra_pause_sound_command', now);
-            
-            document.getElementById('status').innerText = "Команда паузы звука отправлена!";
-            setTimeout(() => {
-                document.getElementById('status').innerText = "Нажмите кнопку, чтобы принудительно начать шоу на всех экранах.";
-            }, 3000);
-        }
-
-        function toggleQR() {
-            const now = new Date().getTime();
-            localStorage.setItem('iskra_toggle_qr_command', now);
-            
-            document.getElementById('status').innerText = "Команда переключения QR отправлена!";
-            setTimeout(() => {
-                document.getElementById('status').innerText = "Нажмите кнопку, чтобы принудительно начать шоу на всех экранах.";
-            }, 3000);
-        }
-
-        function toggleTimer() {
-            const now = new Date().getTime();
-            localStorage.setItem('iskra_toggle_timer_command', now);
-            
-            document.getElementById('status').innerText = "Команда переключения таймера отправлена!";
-            setTimeout(() => {
-                document.getElementById('status').innerText = "Нажмите кнопку, чтобы принудительно начать шоу на всех экранах.";
-            }, 3000);
-        }
-
-        function stopShow() {
-            const now = new Date().getTime();
-            localStorage.setItem('iskra_stop_show_command', now);
-            
-            document.getElementById('status').innerText = "Команда остановки шоу отправлена!";
-            setTimeout(() => {
-                document.getElementById('status').innerText = "Нажмите кнопку, чтобы принудительно начать шоу на всех экранах.";
-            }, 3000);
-        }
-
-        function showMessage() {
-            const text = document.getElementById('msgInput').value;
+        function sendModMessage() {
+            const input = document.getElementById('modChatInput');
+            const text = input.value.trim();
             if (!text) return;
-            
-            localStorage.setItem('iskra_message_text', text);
-            const now = new Date().getTime();
-            localStorage.setItem('iskra_show_message_command', now);
-            
-            document.getElementById('status').innerText = "Сообщение отправлено на экраны!";
-            document.getElementById('msgInput').value = '';
+
+            socket.emit('send_message', {
+                author: 'Модератор',
+                text: text,
+                is_moderator: true
+            });
+            input.value = '';
+        }
+
+        function updateVideoLink() {
+            const link = document.getElementById('videoLinkInput').value.trim();
+            if (link) {
+                socket.emit('update_video_link', { link: link });
+                showStatus("Ссылка на видео обновлена!");
+            }
+        }
+
+        function sendOverlayMessage() {
+            const input = document.getElementById('overlayMsgInput');
+            const text = input.value.trim();
+            if (text) {
+                socket.emit('send_overlay_message', { text: text });
+                showStatus("Уведомление отправлено на экраны!");
+                input.value = '';
+            }
+        }
+
+        function showStatus(text) {
+            const statusEl = document.getElementById('status');
+            statusEl.innerText = text;
             setTimeout(() => {
-                document.getElementById('status').innerText = "Нажмите кнопку, чтобы принудительно начать шоу на всех экранах.";
+                statusEl.innerText = "Система готова к работе.";
             }, 3000);
         }
 
+        // Legacy LocalStorage Commands
+        function triggerShow() {
+            localStorage.setItem('iskra_show_start_command', new Date().getTime());
+            showStatus("Команда отправлена! Шоу должно начаться.");
+        }
+        function playSound() {
+            localStorage.setItem('iskra_play_sound_command', new Date().getTime());
+            showStatus("Команда включения звука отправлена!");
+        }
+        function pauseSound() {
+            localStorage.setItem('iskra_pause_sound_command', new Date().getTime());
+            showStatus("Команда паузы звука отправлена!");
+        }
+        function toggleQR() {
+            localStorage.setItem('iskra_toggle_qr_command', new Date().getTime());
+            showStatus("Команда переключения QR отправлена!");
+        }
+        function toggleTimer() {
+            localStorage.setItem('iskra_toggle_timer_command', new Date().getTime());
+            showStatus("Команда переключения таймера отправлена!");
+        }
+        function stopShow() {
+            localStorage.setItem('iskra_stop_show_command', new Date().getTime());
+            showStatus("Команда остановки шоу отправлена!");
+        }
         function resetShow() {
-            const now = new Date().getTime();
-            localStorage.setItem('iskra_show_reset_command', now);
-            
-            document.getElementById('status').innerText = "Команда сброса отправлена! Страница перезагрузится.";
-            setTimeout(() => {
-                document.getElementById('status').innerText = "Нажмите кнопку, чтобы принудительно начать шоу на всех экранах.";
-            }, 3000);
+            localStorage.setItem('iskra_show_reset_command', new Date().getTime());
+            showStatus("Команда сброса отправлена! Страница перезагрузится.");
         }
     </script>
 </body>
