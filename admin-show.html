@@ -43,7 +43,14 @@
     <button onclick="pauseSound()" style="background: #f59e0b; margin-top: 16px;">ПАУЗА ЗВУКА</button>
     <button onclick="toggleQR()" style="background: #8b5cf6; margin-top: 16px;">ПОКАЗАТЬ/СКРЫТЬ QR</button>
     <button onclick="toggleTimer()" style="background: #6366f1; margin-top: 16px;">ПОКАЗАТЬ/СКРЫТЬ ТАЙМЕР</button>
-    <button onclick="resetShow()" style="background: #ef4444; margin-top: 16px;">СБРОСИТЬ / НАЧАТЬ ЗАНОВО</button>
+    <button onclick="stopShow()" style="background: #dc2626; margin-top: 16px;">ОСТАНОВИТЬ ШОУ</button>
+    
+    <div style="margin-top: 32px; width: 100%; max-width: 400px; display: flex; gap: 8px;">
+        <input id="msgInput" type="text" placeholder="Текст сообщения на экран" style="flex:1; padding: 12px; border-radius: 8px; border: none; font-size: 16px;">
+        <button onclick="showMessage()" style="background: #0ea5e9; padding: 12px; margin: 0;">ОТПРАВИТЬ</button>
+    </div>
+
+    <button onclick="resetShow()" style="background: #ef4444; margin-top: 32px;">СБРОСИТЬ / НАЧАТЬ ЗАНОВО</button>
     <div class="status" id="status">Нажмите кнопку, чтобы принудительно начать шоу на всех экранах.</div>
 
     <script>
@@ -93,6 +100,31 @@
             localStorage.setItem('iskra_toggle_timer_command', now);
             
             document.getElementById('status').innerText = "Команда переключения таймера отправлена!";
+            setTimeout(() => {
+                document.getElementById('status').innerText = "Нажмите кнопку, чтобы принудительно начать шоу на всех экранах.";
+            }, 3000);
+        }
+
+        function stopShow() {
+            const now = new Date().getTime();
+            localStorage.setItem('iskra_stop_show_command', now);
+            
+            document.getElementById('status').innerText = "Команда остановки шоу отправлена!";
+            setTimeout(() => {
+                document.getElementById('status').innerText = "Нажмите кнопку, чтобы принудительно начать шоу на всех экранах.";
+            }, 3000);
+        }
+
+        function showMessage() {
+            const text = document.getElementById('msgInput').value;
+            if (!text) return;
+            
+            localStorage.setItem('iskra_message_text', text);
+            const now = new Date().getTime();
+            localStorage.setItem('iskra_show_message_command', now);
+            
+            document.getElementById('status').innerText = "Сообщение отправлено на экраны!";
+            document.getElementById('msgInput').value = '';
             setTimeout(() => {
                 document.getElementById('status').innerText = "Нажмите кнопку, чтобы принудительно начать шоу на всех экранах.";
             }, 3000);

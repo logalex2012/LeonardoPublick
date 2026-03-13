@@ -160,6 +160,16 @@
         <div id="iskraSpeech" style="display:none; margin-top: 32px; max-width: 600px; line-height: 1.6; font-size: 18px; opacity: 0; transition: opacity 1s ease;">
             <p>Добро пожаловать на шоу Леонардо! Искусственный интеллект "Искра" приветствует вас.</p>
         </div>
+        
+        <div id="finishMessage" style="display:none; margin-top: 32px; text-align: center; opacity: 0; transition: opacity 1s ease;">
+            <h2 style="font-size: 40px; margin-bottom: 16px; color: #4446E1;">Приятного просмотра!</h2>
+        </div>
+
+        <div id="customMessage" style="display:none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(15, 23, 42, 0.95); padding: 40px; border-radius: 20px; text-align: center; z-index: 10000; border: 1px solid #4446E1; box-shadow: 0 20px 50px rgba(0,0,0,0.5); backdrop-filter: blur(10px); max-width: 80%;">
+            <h2 id="customMessageText" style="font-size: 32px; margin: 0; line-height: 1.4;"></h2>
+            <button onclick="this.parentElement.style.display='none'" style="margin-top: 24px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 8px 24px; border-radius: 8px; cursor: pointer; font-size: 14px; transition: background 0.2s;">Закрыть</button>
+        </div>
+
         <audio id="iskraAudio" src="/static/iskra-leonardo.mp3" preload="auto"></audio>
     </div>
 
@@ -221,6 +231,16 @@
                     timer.style.display = (timer.style.display === 'none') ? 'flex' : 'none';
                 }
             }
+            if (e.key === 'iskra_stop_show_command') {
+                finishShow();
+            }
+            if (e.key === 'iskra_show_message_command') {
+                const msg = localStorage.getItem('iskra_message_text');
+                if (msg) {
+                    document.getElementById('customMessageText').innerText = msg;
+                    document.getElementById('customMessage').style.display = 'block';
+                }
+            }
             if (e.key === 'iskra_show_reset_command') {
                 location.reload();
             }
@@ -280,11 +300,61 @@
                 
                 const audio = document.getElementById('iskraAudio');
                 if (audio) {
+                    audio.onended = finishShow; // Auto-finish when audio ends
                     audio.play().catch(e => {
                         console.log("Автоплей заблокирован. Ожидание команды из админки или взаимодействия.", e);
                     });
                 }
             }, 100);
+        }
+
+        function finishShow() {
+            const statusText = document.getElementById('statusText');
+            const timer = document.getElementById('timer');
+            const iskraSpeech = document.getElementById('iskraSpeech');
+            const finishMessage = document.getElementById('finishMessage');
+            const audio = document.getElementById('iskraAudio');
+
+            if (audio) {
+                audio.pause();
+                audio.currentTime = 0;
+            }
+
+            // Hide speech and status
+            iskraSpeech.style.opacity = '0';
+            statusText.style.display = 'none';
+            
+            setTimeout(() => {
+                iskraSpeech.style.display = 'none';
+                
+                // Show finish message
+                finishMessage.style.display = 'block';
+                setTimeout(() => finishMessage.style.opacity = '1', 50);
+
+                // Revert to timer or initial state after 10 seconds
+                setTimeout(() => {
+                    finishMessage.style.opacity = '0';
+                    setTimeout(() => {
+                        finishMessage.style.display = 'none';
+                        
+                        // Check if we should show timer again
+                        const now = new Date();
+                        if (targetDate > now) {
+                            timer.style.display = 'flex';
+                            statusText.innerText = "До начала шоу";
+                        } else {
+                            statusText.innerText = "Шоу завершено";
+                        }
+                        statusText.style.display = 'block';
+                        isShowStarted = false;
+                        
+                        // Show QR again if it was hidden
+                        const qrContainer = document.getElementById('qrContainer');
+                        if (qrContainer) qrContainer.style.display = 'block';
+
+                    }, 1000);
+                }, 10000); // Show "Pleasant viewing" for 10 seconds
+            }, 1000);
         }
 
         function updateTimer() {
