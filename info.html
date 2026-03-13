@@ -487,10 +487,15 @@
             
             document.getElementById('modalDescription').textContent = generateDescription(p);
             
-            // Mock location logic based on type
+            // Location logic based on actual cabinet data
             let location = "Актовый зал";
-            if (p.type === "IT") location = "Кабинет 205 (2 этаж)";
-            if (p.type === "Экология") location = "Кабинет 301 (3 этаж)";
+            if (p.cabinet) {
+                location = `Кабинет ${p.cabinet}`;
+            } else if (p.type === "IT") {
+                location = "Кабинет 205 (2 этаж)";
+            } else if (p.type === "Экология") {
+                location = "Кабинет 301 (3 этаж)";
+            }
             document.getElementById('modalLocation').textContent = location;
 
             modal.classList.add('open');
@@ -534,8 +539,23 @@
                 
                 const [header, ...rows] = lines;
                 allProjects = rows.map(row => {
-                    const cols = row.split(",");
-                    // CSV: FIO, Title, School, Grade, Teacher, Type
+                    // Используем регулярное выражение для правильного парсинга CSV с кавычками
+                    const cols = [];
+                    let inQuotes = false;
+                    let currentValue = '';
+                    for (let i = 0; i < row.length; i++) {
+                        const char = row[i];
+                        if (char === '"') {
+                            inQuotes = !inQuotes;
+                        } else if (char === ',' && !inQuotes) {
+                            cols.push(currentValue);
+                            currentValue = '';
+                        } else {
+                            currentValue += char;
+                        }
+                    }
+                    cols.push(currentValue);
+
                     return {
                         fio: (cols[0] || "").trim(),
                         title: (cols[1] || "").trim(),
@@ -543,6 +563,7 @@
                         grade: (cols[3] || "").trim(),
                         teacher: (cols[4] || "").trim(),
                         type: (cols[5] || "").trim(),
+                        cabinet: (cols[6] || "").trim()
                     };
                 }).filter(p => p.fio && p.title);
             })
