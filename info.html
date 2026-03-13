@@ -25,12 +25,46 @@
             background-size: cover;
             background-position: center;
             font-family: "Inter", sans-serif;
+            color: #f9fafb;
+        }
+
+        /* Navigation */
+        .nav-bar {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            padding: 20px;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: #fff;
+        }
+
+        .nav-link i {
+            font-size: 16px;
         }
 
         h1 {
             margin: 32px 24px 16px;
             color: #f9fafb;
-            font-size: 18px;
+            font-size: 24px;
             font-weight: 800;
             letter-spacing: 0.01em;
             text-align: center;
@@ -46,13 +80,13 @@
             margin-top: 32px;
             display: flex;
             justify-content: center;
+            padding: 0 16px;
         }
 
         .search-pill {
-            min-width: 320px;
-            max-width: 720px;
-            width: calc(100% - 48px);
-            padding: 14px 28px;
+            max-width: 600px;
+            width: 100%;
+            padding: 14px 24px;
             border-radius: 999px;
             border: 1px solid rgba(148, 163, 184, 0.7);
             background: rgba(15, 23, 42, 0.45);
@@ -64,6 +98,13 @@
             align-items: center;
             gap: 14px;
             cursor: text;
+            transition: all 0.3s ease;
+        }
+
+        .search-pill:focus-within {
+            background: rgba(15, 23, 42, 0.8);
+            border-color: #4446E1;
+            box-shadow: 0 0 0 4px rgba(68, 70, 225, 0.2);
         }
 
         .search-icon {
@@ -77,119 +118,436 @@
             outline: none;
             background: transparent;
             color: #f9fafb;
-            font-size: 18px;
-            font-weight: 600;
-            text-align: center;
+            font-size: 16px;
+            font-weight: 500;
         }
 
         .search-input::placeholder {
-            color: #e5e7eb;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Results */
+        .results-container {
+            margin: 24px auto 80px;
+            max-width: 600px;
+            width: calc(100% - 32px);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .result-card {
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(10px);
+            transition: transform 0.2s, background 0.2s;
+            cursor: pointer;
+        }
+
+        .result-card:hover {
+            transform: translateY(-2px);
+            background: rgba(15, 23, 42, 0.8);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #fff;
+        }
+
+        .card-meta {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.5;
+        }
+
+        .card-meta i {
+            width: 20px;
+            color: #4446E1;
+            text-align: center;
+            margin-right: 8px;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.open {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: #1e293b;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transform: scale(0.95);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.open .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            padding: 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .modal-close {
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0;
+            line-height: 1;
+        }
+
+        .modal-close:hover {
+            color: #fff;
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .project-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 99px;
+            background: rgba(68, 70, 225, 0.2);
+            color: #a5a6ff;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .info-section {
+            margin-bottom: 24px;
+        }
+
+        .info-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .info-text {
+            font-size: 15px;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .file-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            text-decoration: none;
+            color: #fff;
+            transition: background 0.2s;
+        }
+
+        .file-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .file-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(68, 70, 225, 0.2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 16px;
+            color: #a5a6ff;
+        }
+
+        .file-info {
+            flex: 1;
+        }
+
+        .file-name {
+            font-weight: 500;
+            font-size: 14px;
+            margin-bottom: 2px;
+        }
+
+        .file-size {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
         }
 
         @media (max-width: 480px) {
-            h1 {
-                margin: 24px 16px 12px;
-                font-size: 16px;
+            .nav-link span {
+                display: none;
             }
-
-            .search-wrapper {
-                margin-top: 24px;
+            .nav-link i {
+                font-size: 20px;
             }
-
-            .search-pill {
-                width: calc(100% - 32px);
-                min-width: 0;
-                padding: 12px 20px;
-            }
-
-            .search-input {
-                font-size: 16px;
+            .modal-content {
+                max-height: 100vh;
+                height: 100%;
+                border-radius: 0;
             }
         }
     </style>
 
-   <img class="logo" src="static/logo.svg" alt="Логотип школы № 1409">
-    <div class="search-wrapper">
-        <div class="search-pill">
-            <i class="fa-solid fa-magnifying-glass search-icon"></i>
-            <input id="searchInput" class="search-input" type="text" placeholder="Введите своё имя для поиска в системе">
+    <!-- Navigation -->
+    <nav class="nav-bar">
+        <a href="#" class="nav-link active">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span>Поиск</span>
+        </a>
+        <a href="mobile-dashbord.html" class="nav-link">
+            <i class="fa-solid fa-layer-group"></i>
+            <span>Проекты</span>
+        </a>
+    </nav>
+
+    <img class="logo" src="static/logo.svg" alt="Логотип школы № 1409">
+    
+    <!-- Search View -->
+    <div id="searchView">
+        <h1>Найти участника</h1>
+
+        <div class="search-wrapper">
+            <div class="search-pill">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input id="searchInput" class="search-input" type="text" placeholder="Введите имя или название проекта">
+            </div>
+        </div>
+
+        <div id="resultsContainer" class="results-container">
+            <!-- Results will be injected here -->
+            <div style="text-align: center; color: rgba(255,255,255,0.5); margin-top: 40px;">
+                <i class="fa-regular fa-keyboard" style="font-size: 32px; margin-bottom: 16px; opacity: 0.5;"></i>
+                <p>Начните вводить имя участника или название проекта,<br>чтобы найти информацию.</p>
+            </div>
         </div>
     </div>
 
-    <div id="result" style="margin:24px auto 0; max-width:720px; width:calc(100% - 48px); color:#f9fafb; font-size:14px; line-height:1.5; font-family:'Inter',sans-serif;">
+    <!-- Project Details Modal -->
+    <div id="projectModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle" style="margin: 0; font-size: 20px; line-height: 1.4;">Название проекта</h2>
+                <button class="modal-close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div id="modalTag" class="project-tag">Категория</div>
+                
+                <div class="info-section">
+                    <div class="info-label">Автор</div>
+                    <div id="modalAuthor" class="info-text" style="font-size: 18px; font-weight: 600;">Иванов Иван</div>
+                    <div id="modalSchool" class="info-text" style="opacity: 0.7;">ГБОУ Школа № 1409, 10 класс</div>
+                </div>
+
+                <div class="info-section">
+                    <div class="info-label">Научный руководитель</div>
+                    <div id="modalTeacher" class="info-text">Петров П.П.</div>
+                </div>
+
+                <div class="info-section">
+                    <div class="info-label">О проекте</div>
+                    <div id="modalDescription" class="info-text"></div>
+                </div>
+
+                <div class="info-section">
+                    <div class="info-label">Навигация</div>
+                    <div class="info-text">
+                        <i class="fa-solid fa-location-dot" style="color: #4446E1; margin-right: 8px;"></i>
+                        <span id="modalLocation">Секция IT, 2 этаж, Кабинет 205</span>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
-        // ЗАМЕНИТЕ URL ниже на ссылку "Опубликовано в веб" в формате CSV из вашей Google‑таблицы
-        // Пример: https://docs.google.com/spreadsheets/d/ID/export?format=csv
         const SHEET_CSV_URL = "/static/data.csv";
+        let allProjects = [];
 
-        let data = [];
+        const searchInput = document.getElementById("searchInput");
+        const resultsContainer = document.getElementById("resultsContainer");
+        const modal = document.getElementById("projectModal");
 
-        const input = document.getElementById("searchInput");
-        const result = document.getElementById("result");
+        // Fallback data
+        const FALLBACK_PROJECTS = [
+            {
+                fio: "Иванов Иван",
+                title: "Пример проекта конкурса",
+                school: "ГБОУ Школа № 1409",
+                grade: "9",
+                teacher: "Петров П.П.",
+                type: "IT",
+                cabinet: "205"
+            },
+            {
+                fio: "Петрова Мария",
+                title: "Ещё один пример проекта",
+                school: "ГБОУ Школа № 1409",
+                grade: "8",
+                teacher: "Иванова И.И.",
+                type: "Экология",
+                cabinet: "301"
+            }
+        ];
 
-        function renderResult(person) {
-            if (!person) {
-                result.innerHTML = "<p>Ничего не найдено. Попробуйте уточнить имя.</p>";
+        function renderResults(projects) {
+            if (!projects.length) {
+                resultsContainer.innerHTML = `
+                    <div style="text-align: center; color: rgba(255,255,255,0.5); margin-top: 40px;">
+                        <p>Ничего не найдено.</p>
+                    </div>`;
                 return;
             }
 
-            result.innerHTML = `
-                <div style="border-radius:16px;border:1px solid rgba(148,163,184,0.6);padding:16px 20px;background:rgba(15,23,42,0.7);backdrop-filter:blur(10px);">
-                    <div style="font-size:16px;font-weight:700;margin-bottom:4px;">${person.name}</div>
-                    <div style="margin-bottom:6px;"><strong>Кабинет:</strong> ${person.cabinet}</div>
-                    <div style="margin-bottom:6px;"><strong>Проект:</strong> ${person.project}</div>
-                    <div><strong>Как добраться:</strong> ${person.route}</div>
+            resultsContainer.innerHTML = projects.map(p => `
+                <div class="result-card" onclick="openProject('${p.fio.replace(/'/g, "\\'")}')">
+                    <div class="card-title">${p.title}</div>
+                    <div class="card-meta">
+                        <div style="margin-bottom: 4px;"><i class="fa-solid fa-user"></i> ${p.fio}</div>
+                        <div style="margin-bottom: 4px;"><i class="fa-solid fa-school"></i> ${p.school || 'Школа не указана'}</div>
+                        ${p.type ? `<div><i class="fa-solid fa-tag"></i> ${p.type}</div>` : ''}
+                    </div>
                 </div>
-            `;
+            `).join("");
         }
 
-        input.addEventListener("input", () => {
-            const value = input.value.trim().toLowerCase();
+        function generateDescription(project) {
+            const t = (project.title || "").toLowerCase();
+            let desc = `Проект «${project.title}» направлен на изучение важной проблемы в своей области. `;
 
+            if (t.includes('эколог') || t.includes('мусор') || t.includes('природ') || t.includes('вода') || t.includes('переработ')) {
+                desc += "Автор рассматривает вопросы сохранения окружающей среды и предлагает пути решения экологических задач. ";
+            } else if (t.includes('ии') || t.includes('интеллект') || t.includes('бот') || t.includes('сайт') || t.includes('программ') || t.includes('приложен')) {
+                desc += "Работа посвящена современным цифровым технологиям и их применению в повседневной жизни. ";
+            } else if (t.includes('истор') || t.includes('памят') || t.includes('войн') || t.includes('музей')) {
+                desc += "Исследование затрагивает важные исторические события и сохранение культурного наследия. ";
+            } else if (t.includes('язык') || t.includes('литератур') || t.includes('слов') || t.includes('книг')) {
+                desc += "Проект анализирует лингвистические особенности и литературные произведения. ";
+            } else if (t.includes('бизнес') || t.includes('стартап') || t.includes('экран') || t.includes('реклам')) {
+                desc += "Это проект, который дает начинающему бизнесу выводить свой контент на виртуальные экраны. ";
+            }
+
+            desc += `Работа выполнена учащимся ${project.grade} класса под руководством опытного наставника.`;
+            return desc;
+        }
+
+        function openProject(fio) {
+            const p = allProjects.find(item => item.fio === fio);
+            if (!p) return;
+
+            document.getElementById('modalTitle').textContent = p.title;
+            document.getElementById('modalTag').textContent = p.type || 'Общее';
+            document.getElementById('modalAuthor').textContent = p.fio;
+            document.getElementById('modalSchool').textContent = `${p.school}${p.grade ? `, ${p.grade} класс` : ''}`;
+            document.getElementById('modalTeacher').textContent = p.teacher || 'Не указан';
+            
+            document.getElementById('modalDescription').textContent = generateDescription(p);
+            
+            // Mock location logic based on type
+            let location = "Актовый зал";
+            if (p.type === "IT") location = "Кабинет 205 (2 этаж)";
+            if (p.type === "Экология") location = "Кабинет 301 (3 этаж)";
+            document.getElementById('modalLocation').textContent = location;
+
+            modal.classList.add('open');
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        }
+
+        function closeModal() {
+            modal.classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        // Close modal on outside click
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+
+        searchInput.addEventListener("input", () => {
+            const value = searchInput.value.trim().toLowerCase();
             if (!value) {
-                result.innerHTML = "";
+                resultsContainer.innerHTML = `
+                    <div style="text-align: center; color: rgba(255,255,255,0.5); margin-top: 40px;">
+                        <i class="fa-regular fa-keyboard" style="font-size: 32px; margin-bottom: 16px; opacity: 0.5;"></i>
+                        <p>Начните вводить имя участника или название проекта,<br>чтобы найти информацию.</p>
+                    </div>`;
                 return;
             }
 
-            const match = data.find((item) =>
-                item.name.toLowerCase().includes(value)
+            const filtered = allProjects.filter(p => 
+                (p.fio && p.fio.toLowerCase().includes(value)) || 
+                (p.title && p.title.toLowerCase().includes(value))
             );
-
-            renderResult(match);
+            renderResults(filtered);
         });
 
-        // Загружаем данные из Google Sheets (CSV)
+        // Load Data
         fetch(SHEET_CSV_URL)
-            .then((res) => res.text())
-            .then((text) => {
+            .then(res => res.text())
+            .then(text => {
                 const lines = text.split(/\r?\n/).filter(Boolean);
-                // считаем, что первая строка — заголовки: ФИО, Название, Школа, Класс, Руководитель, Тип
+                if (lines.length <= 1) throw new Error("No data");
+                
                 const [header, ...rows] = lines;
-                data = rows.map((row) => {
+                allProjects = rows.map(row => {
                     const cols = row.split(",");
-                    // Индексы колонок: 0=ФИО, 1=Название, 2=Школа, 3=Класс, 4=Руководитель, 5=Тип
-                    // Для поиска кабинета нам нужно имя (0), кабинет (пока нет в таблице, пусть будет пусто), проект (1), маршрут (пусто)
-                    
-                    // ВАЖНО: В вашей таблице пока нет колонок "Кабинет" и "Маршрут".
-                    // Если вы их добавите, нужно будет поменять индексы.
-                    // Пока мапим так:
-                    const name = cols[0];
-                    const project = cols[1];
-                    const cabinet = ""; // Данных нет
-                    const route = "";   // Данных нет
-
+                    // CSV: FIO, Title, School, Grade, Teacher, Type
                     return {
-                        name: (name || "").trim(),
-                        cabinet: (cabinet || "").trim(),
-                        project: (project || "").trim(),
-                        route: (route || "").trim(),
+                        fio: (cols[0] || "").trim(),
+                        title: (cols[1] || "").trim(),
+                        school: (cols[2] || "").trim(),
+                        grade: (cols[3] || "").trim(),
+                        teacher: (cols[4] || "").trim(),
+                        type: (cols[5] || "").trim(),
                     };
-                }).filter((item) => item.name);
+                }).filter(p => p.fio && p.title);
             })
             .catch(() => {
-                result.innerHTML = "<p>Не удалось загрузить данные из Google&nbsp;Таблицы.</p>";
+                allProjects = FALLBACK_PROJECTS;
             });
     </script>
     <!-- Global Overlay for Show Start -->
